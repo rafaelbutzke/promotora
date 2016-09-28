@@ -1,0 +1,772 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Ficha cadastral para solicitação de financiamento</title>
+	<h:outputStylesheet name="estilo.css" />
+</h:head>
+
+<h:body>
+	<p:fieldset styleClass="cabecalho">
+		<h:panelGrid columns="3">
+			<p:graphicImage id="logo" styleClass="logo1" name="img/bb_red2_120x120.png"/>
+			<p:outputLabel id="titulo" styleClass="titulo1"
+				value="Financiamento de veículos" />
+		</h:panelGrid>
+	</p:fieldset>
+	
+	<p:ajaxStatus onstart="PF('statusDialog').show()"
+		onsuccess="PF('statusDialog').hide()" />
+
+	<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+		closable="false" resizable="false" showHeader="false">
+		<p:graphicImage name="img/loading_black.gif" />
+	</p:dialog>
+	
+	<h:form id="formulario">
+		<p:growl id="menssagem" sticky="true" showDetail="true" />
+		<h:panelGrid cellpadding="12">
+			<p:outputLabel
+				value="Ficha cadastral para solicitação de financiamento de veículo."
+				style="text-align:center;" />
+		</h:panelGrid>
+		<p:accordionPanel multiple="true" activeIndex="0,1,3">
+			<p:tab title="Dados do veículo">
+				<h:panelGrid columns="2" cellpadding="2">
+					<p:outputLabel for="tipoVeiculo" value="Tipo Veículo:" />
+					<p:outputLabel for="retorno" value="Retorno:" />
+					<p:selectOneMenu id="tipoVeiculo"
+						value="#{propostaBean.proposta.tipoVeiculo}" required="true">
+						<p:ajax event="valueChange"
+							listener="#{propostaBean.chamaProposta}" />
+						<f:selectItem itemLabel="Selecione..." itemValue="" />
+						<f:selectItems value="#{propostaBean.tipoVeiculos}" />
+					</p:selectOneMenu>
+					<p:selectOneMenu id="retorno"
+						value="#{propostaBean.proposta.retorno}">
+						<p:ajax event="valueChange"
+							listener="#{propostaBean.calculaValorFinanciado}"
+							update="parcelas" />
+						<f:selectItem itemLabel="Selecione..." itemValue="" />
+						<f:selectItems value="#{propostaBean.retornos}" />
+					</p:selectOneMenu>
+				</h:panelGrid>
+				<h:panelGrid columns="6" cellpadding="2">
+					<p:outputLabel for="fabricante" value="Fabricante:" />
+					<p:outputLabel for="modeloVeiculo" value="Veículo:" />
+					<p:outputLabel for="ano" value="Ano:" />
+					<p:outputLabel for="modelo" value="Mod.:" />
+					<p:outputLabel for="valorCompra" value="Valor Compra:" />
+					<p:outputLabel for="valorEntrada" value="Valor Entrada:" />
+					<p:inputText id="fabricante"
+						value="#{propostaBean.proposta.fabricante}"
+						styleClass="fabricante" validator="validacoes.validaPreenchimento"
+						required="true">
+						<p:ajax event="change" update="fabricante,:formulario:menssagem">
+							<f:validator validatorId="fabricante" />
+						</p:ajax>
+					</p:inputText>
+					<p:inputText id="modeloVeiculo"
+						value="#{propostaBean.proposta.modeloVeiculo}"
+						styleClass="veiculo" validator="validacoes.validaPreenchimento"
+						required="true">
+						<p:ajax event="change" update="modeloVeiculo,:formulario:menssagem">
+							<f:validator validatorId="modeloVeiculo" />
+						</p:ajax>
+					</p:inputText>
+					<p:inputMask id="ano" value="#{propostaBean.proposta.ano}"
+						styleClass="anoModelo" mask="9999"
+						validator="validacoes.validaAnoModelo" required="true">
+						<p:ajax event="change" update="ano,:formulario:menssagem">
+							<f:validator validatorId="ano" />
+						</p:ajax>
+					</p:inputMask>
+					<p:inputMask id="modelo" value="#{propostaBean.proposta.modelo}"
+						styleClass="anoModelo" mask="9999"
+						validator="validacoes.validaAnoModelo" required="true">
+						<p:ajax event="change" update="modelo,:formulario:menssagem">
+							<f:validator validatorId="modelo" />
+						</p:ajax>
+					</p:inputMask>
+					<p:inputText id="valorCompra"
+						value="#{propostaBean.proposta.valorCompra}" styleClass="dinheiro"
+						validator="validacoes.validaPreenchimento" required="true">
+						<f:convertNumber pattern="#,###,###,##0.00" minFractionDigits="2" />
+						<p:ajax update="valorCompra,:formulario:menssagem" event="change" />
+					</p:inputText>
+					<p:inputText id="valorEntrada"
+						value="#{propostaBean.proposta.valorEntrada}"
+						styleClass="dinheiro" validator="validacoes.validaPreenchimento"
+						required="true">
+						<f:convertNumber pattern="#,###,###,##0.00" minFractionDigits="2" />
+						<p:ajax listener="#{propostaBean.calculaValorFinanciado}"
+							update="valorCompra,valorEntrada,valorFinanciado,parcelas,:formulario:menssagem"
+							event="change" />
+					</p:inputText>
+				</h:panelGrid>
+				<h:panelGrid columns="2" cellpadding="2">
+					<p:outputLabel value="Valor financiado:  *" />
+					<p:outputLabel for="parcelas" value="Planos:" />
+					<p:outputLabel id="valorFinanciado"
+						value="#{propostaBean.proposta.valorFinanciado}">
+						<f:convertNumber pattern="#,###,###,##0.00" minFractionDigits="2" />
+					</p:outputLabel>
+					<p:selectOneMenu id="parcelas"
+						value="#{propostaBean.proposta.plano}" required="true">
+						<p:ajax event="valueChange"
+							listener="#{propostaBean.chamaProposta}" />
+						<f:selectItem itemLabel="Selecione..." itemValue="" />
+						<f:selectItems value="#{propostaBean.parcelas}" />
+					</p:selectOneMenu>
+
+				</h:panelGrid>
+			</p:tab>
+			<p:tab title="Dados pessoais">
+				<h:panelGrid columns="3" cellpadding="2">
+					<p:outputLabel for="nomeCliente" value="Nome:" />
+					<p:outputLabel for="cpfCliente" value="CPF:" />
+					<p:outputLabel for="dataNascimentoCliente" value="Data Nascimento:" />
+					<p:inputText id="nomeCliente"
+						value="#{propostaBean.proposta.nomeCliente}"
+						styleClass="nomeDescricao"
+						validator="validacoes.validaPreenchimento" required="true">
+						<p:ajax event="blur" update="nomeCliente,:formulario:menssagem">
+							<f:validator validatorId="nomeCliente" />
+						</p:ajax>
+					</p:inputText>
+					<p:inputMask id="cpfCliente"
+						value="#{propostaBean.proposta.cpfCliente}"
+						styleClass="cpfCliente" mask="999.999.999-99"
+						validator="validacoes.validaCodigoCliente" required="true">
+						<p:ajax event="blur" update="cpfCliente,:formulario:menssagem">
+							<f:validator validatorId="cpfCliente" />
+						</p:ajax>
+					</p:inputMask>
+					<p:calendar id="dataNascimentoCliente"
+						value="#{propostaBean.proposta.dataNascimentoCliente}"
+						pattern="dd/MM/yyyy" mask="true" styleClass="dataCalendar"
+						effect="fold" required="true">
+						<p:ajax event="blur"
+							update="dataNascimentoCliente,:formulario:menssagem">
+							<f:validator validatorId="dataNascimentoCliente" />
+						</p:ajax>
+					</p:calendar>
+				</h:panelGrid>
+				<h:panelGrid columns="5" cellpadding="2">
+					<p:outputLabel for="numeroRg" value="Número do RG:" />
+					<p:outputLabel for="orgaoEmissor" value="Órgão emissor:" />
+					<p:outputLabel for="ufOrgaoEmissor" value="UFRG:" />
+					<p:outputLabel for="dataEmissao" value="Data de emissão:" />
+					<p:outputLabel for="nacionalidade" value="Nacionalidade:" />
+					<p:inputText id="numeroRg"
+						value="#{propostaBean.proposta.registroGeralCliente}"
+						styleClass="padrao" validator="validacoes.validaPreenchimento"
+						required="true">
+						<p:ajax event="blur" update="numeroRg,:formulario:menssagem">
+							<f:validator validatorId="numeroRg" />
+						</p:ajax>
+					</p:inputText>
+
+					<p:inputText id="orgaoEmissor"
+						value="#{propostaBean.proposta.orgaoEmissorCliente}"
+						styleClass="padrao" validator="validacoes.validaPreenchimento"
+						required="true">
+						<p:ajax event="blur" update="orgaoEmissor,:formulario:menssagem">
+							<f:validator validatorId="orgaoEmissor" />
+						</p:ajax>
+					</p:inputText>
+					<p:selectOneMenu id="ufOrgaoEmissor"
+						value="#{propostaBean.proposta.ufOrgaoEmissorCliente}"
+						styleClass="uf" required="true">
+						<f:selectItem itemLabel="Sel ." itemValue="" />
+						<f:selectItems value="#{propostaBean.estados}" />
+					</p:selectOneMenu>
+					<p:calendar id="dataEmissao"
+						value="#{propostaBean.proposta.dataEmissaoCliente}"
+						pattern="dd/MM/yyyy" mask="true" styleClass="dataCalendar"
+						effect="fold" required="true" />
+					<p:selectOneMenu id="nacionalidade"
+						value="#{propostaBean.proposta.nacionalidadaCliente}"
+						styleClass="nacionalidade" required="true">
+						<f:selectItem itemLabel="Selecione..." itemValue="" />
+						<f:selectItems value="#{propostaBean.nacionalidades}" />
+					</p:selectOneMenu>
+				</h:panelGrid>
+				<h:panelGrid columns="5" cellpadding="2">
+					<p:outputLabel for="naturalidade" value="Naturalidade:" />
+					<p:outputLabel for="ufNaturalidade" value="UF:" />
+					<p:outputLabel for="sexoCliente" value="Sexo:" />
+					<p:outputLabel for="estadoCivilCliente" value="Estado Civil:" />
+					<p:outputLabel for="escolaridadeCliente" value="Escolaridade:" />
+					<p:inputText id="naturalidade"
+						value="#{propostaBean.proposta.naturalidadeCliente}"
+						styleClass="padrao" validator="validacoes.validaPreenchimento"
+						required="true">
+						<p:ajax event="blur" update="naturalidade,:formulario:menssagem">
+							<f:validator validatorId="naturalidade" />
+						</p:ajax>
+					</p:inputText>
+
+					<p:selectOneMenu id="ufNaturalidade"
+						value="#{propostaBean.proposta.ufNaturalidadeCliente}"
+						styleClass="uf" required="true">
+						<f:selectItem itemLabel="Sel ." itemValue="" />
+						<f:selectItems value="#{propostaBean.estados}" />
+					</p:selectOneMenu>
+					<p:selectOneMenu id="sexoCliente"
+						value="#{propostaBean.proposta.sexoCliente}" styleClass="sexo"
+						required="true">
+						<f:selectItem itemLabel="Selecione..." itemValue="" />
+						<f:selectItems value="#{propostaBean.sexos}" />
+					</p:selectOneMenu>
+					<p:selectOneMenu id="estadoCivilCliente"
+						value="#{propostaBean.proposta.estadoCivilCliente}"
+						styleClass="estadoCivil" required="true"
+						validator="validacoes.validaPreenchimento">
+						<f:selectItem itemLabel="Selecione..." itemValue="" />
+						<f:selectItems value="#{propostaBean.estadoCivils}" />
+						<p:ajax event="change"
+							listener="#{propostaBean.informacaoEstadoCivil}"
+							update=":formulario:menssagem" />
+					</p:selectOneMenu>
+					<p:selectOneMenu id="escolaridadeCliente"
+						value="#{propostaBean.proposta.escolaridadeCliente}"
+						styleClass="escolariadadeCliente" required="true">
+						<f:selectItem itemLabel="Selecione..." itemValue="" />
+						<f:selectItems value="#{propostaBean.escolariadades}" />
+					</p:selectOneMenu>
+				</h:panelGrid>
+				<h:panelGrid columns="2" cellpadding="2">
+					<p:outputLabel for="Pai" value="Pai:" />
+					<p:outputLabel for="Mae" value="Mãe:" />
+					<p:inputText id="Pai" value="#{propostaBean.proposta.paiCliente}"
+						styleClass="filiacao" validator="validacoes.validaPreenchimento"
+						required="true">
+						<p:ajax event="blur" update="Pai,:formulario:menssagem">
+							<f:validator validatorId="Pai" />
+						</p:ajax>
+					</p:inputText>
+					<p:inputText id="Mae" value="#{propostaBean.proposta.maeCliente}"
+						styleClass="filiacao" validator="validacoes.validaPreenchimento"
+						required="true">
+						<p:ajax event="blur" update="Mae,:formulario:menssagem">
+							<f:validator validatorId="Mae" />
+						</p:ajax>
+					</p:inputText>
+				</h:panelGrid>
+				<h:panelGrid columns="3" cellpadding="2">
+					<p:outputLabel for="foneResidencial" value="Fone Residencial:" />
+					<p:outputLabel for="foneCelular" value="Fone Celular:" />
+					<p:outputLabel for="emailCliente" value="E-mail:" />
+					<p:inputMask id="foneResidencial"
+						value="#{propostaBean.proposta.foneResidencial}"
+						mask="(99) 9999-9999" styleClass="fone" required="true" />
+					<p:inputMask id="foneCelular"
+						value="#{propostaBean.proposta.celularCliente}"
+						mask="(99) 9999-9999" styleClass="fone" required="true" />
+					<p:inputText id="emailCliente"
+						value="#{propostaBean.proposta.email}" styleClass="emailPadrao" />
+				</h:panelGrid>
+				<h:panelGrid columns="4" cellpadding="2">
+					<p:outputLabel for="cepResidencial" value="CEP:" />
+					<p:outputLabel for="tipoResidencia" value="Tipo Residência:" />
+					<p:outputLabel for="valorAluguel" value="Valor Aluguel:" />
+					<p:outputLabel for="tempoResidencia" value="Tempo Res.:" />
+					<p:inputMask id="cepResidencial"
+						value="#{propostaBean.proposta.resCep}" mask="99999-999"
+						styleClass="cep" required="true">
+						<p:ajax event="change" listener="#{propostaBean.buscaCep}"
+							update="enderecoResidencial,enderecoResidencial1,:formulario:menssagem" />
+					</p:inputMask>
+					<p:selectOneMenu id="tipoResidencia"
+						value="#{propostaBean.proposta.tipoResidencia}" required="true">
+						<f:selectItem itemLabel="Selecione..." itemValue="" />
+						<f:selectItems value="#{propostaBean.tipoResidencias}" />
+					</p:selectOneMenu>
+					<p:inputText id="valorAluguel"
+						value="#{propostaBean.proposta.valorAluguel}"
+						styleClass="dinheiro">
+						<f:convertNumber pattern="#,###,###,##0.00" minFractionDigits="2" />
+						<p:ajax update="valorAluguel" event="change" />
+					</p:inputText>
+					<p:calendar id="tempoResidencia"
+						value="#{propostaBean.proposta.tempoResidencia}" pattern="MM/yyyy"
+						mask="true" styleClass="dataCalendar" effect="fold"
+						required="true" />
+				</h:panelGrid>
+				<h:panelGrid id="enderecoResidencial" columns="3" cellpadding="2">
+					<p:outputLabel for="resLogradouro" value="Logradouro:" />
+					<p:outputLabel for="resNumero" value="Número:" />
+					<p:outputLabel for="resComplemento" value="Complemento:" />
+					<p:inputText id="resLogradouro"
+						value="#{propostaBean.proposta.resLogradouro}"
+						styleClass="nomeDescricao"
+						validator="validacoes.validaPreenchimento" required="true">
+						<p:ajax event="blur" update="resLogradouro,:formulario:menssagem">
+							<f:validator validatorId="resLogradouro" />
+						</p:ajax>
+					</p:inputText>
+					<p:inputText id="resNumero"
+						value="#{propostaBean.proposta.resNumero}" styleClass="cep"
+						required="true" />
+					<p:inputText id="resComplemento"
+						value="#{propostaBean.proposta.resComplemento}"
+						styleClass="padrao" />
+				</h:panelGrid>
+				<h:panelGrid id="enderecoResidencial1" columns="3" cellpadding="2">
+					<p:outputLabel for="resBairro" value="Bairro:" />
+					<p:outputLabel for="resCidade" value="Cidade:" />
+					<p:outputLabel for="resUf" value="UF:" />
+					<p:inputText id="resBairro"
+						value="#{propostaBean.proposta.resBairro}" styleClass="padrao"
+						validator="validacoes.validaPreenchimento" required="true">
+						<p:ajax event="blur" update="resBairro,:formulario:menssagem">
+							<f:validator validatorId="resBairro" />
+						</p:ajax>
+					</p:inputText>
+					<p:inputText id="resCidade"
+						value="#{propostaBean.proposta.resCidade}" styleClass="padrao"
+						validator="validacoes.validaPreenchimento" required="true">
+						<p:ajax event="blur" update="resCidade,:formulario:menssagem">
+							<f:validator validatorId="resCidade" />
+						</p:ajax>
+					</p:inputText>
+					<p:selectOneMenu id="resUf" value="#{propostaBean.proposta.resUf}"
+						styleClass="uf" required="true">
+						<f:selectItem itemLabel="Sel ." itemValue="" />
+						<f:selectItems value="#{propostaBean.estados}" />
+					</p:selectOneMenu>
+				</h:panelGrid>
+				<h4>Dados do local de trabalho</h4>
+				<h:panelGrid columns="3" cellpadding="2">
+					<p:outputLabel for="classificacaoLocalTrabalho"
+						value="Tipo do local de trabalho:" />
+					<p:outputLabel for="empresaCliente" value="Empresa:" />
+					<p:outputLabel for="dataAdmissao" value="Data Admissão:" />
+					<p:selectOneMenu id="classificacaoLocalTrabalho"
+						value="#{propostaBean.proposta.classificacaoLocalTrabalho}"
+						required="true">
+						<f:selectItem itemLabel="Selecione..." itemValue="" />
+						<f:selectItems value="#{propostaBean.classificacaoLocalTrabalhos}" />
+					</p:selectOneMenu>
+					<p:inputText id="empresaCliente"
+						value="#{propostaBean.proposta.empresa}" styleClass="empresa"
+						validator="validacoes.validaPreenchimento" required="true">
+						<p:ajax event="blur" update="empresaCliente,:formulario:menssagem">
+							<f:validator validatorId="empresaCliente" />
+						</p:ajax>
+					</p:inputText>
+					<p:calendar id="dataAdmissao"
+						value="#{propostaBean.proposta.dataAdmissao}" pattern="dd/MM/yyyy"
+						mask="true" styleClass="dataCalendar" effect="fold"
+						required="true" />
+				</h:panelGrid>
+				<h:panelGrid columns="5" cellpadding="2">
+					<p:outputLabel for="cepComercial" value="CEP:" />
+					<p:outputLabel for="cnpjCliente" value="Cnpj:" />
+					<p:outputLabel for="cargoCliente" value="Cargo:" />
+					<p:outputLabel for="salarioCliente" value="Salário:" />
+					<p:outputLabel for="foneLocalTrabalho" value="Fone trabalho:" />
+
+					<p:inputMask id="cepComercial"
+						value="#{propostaBean.proposta.comCep}" mask="99999-999"
+						styleClass="cep" required="true">
+						<p:ajax event="change"
+							listener="#{propostaBean.buscaCepComercial}"
+							update="enderecoComercial,enderecoComercial1,:formulario:menssagem" />
+					</p:inputMask>
+					<p:inputMask id="cnpjCliente" value="#{propostaBean.proposta.cnpj}"
+						styleClass="cpfCliente" mask="99.999.999/9999-99"
+						validator="validacoes.validaCodigoCliente">
+						<p:ajax event="blur" update=":formulario:menssagem">
+							<f:validator validatorId="cnpjCliente" />
+						</p:ajax>
+					</p:inputMask>
+					<p:inputText id="cargoCliente"
+						value="#{propostaBean.proposta.cargo}" styleClass="cargo"
+						validator="validacoes.validaPreenchimento" required="true">
+						<p:ajax event="blur" update="cargoCliente,:formulario:menssagem">
+							<f:validator validatorId="cargoCliente" />
+						</p:ajax>
+					</p:inputText>
+					<p:inputText id="salarioCliente"
+						value="#{propostaBean.proposta.salario}" styleClass="dinheiro"
+						validator="validacoes.validaPreenchimento" required="true">
+						<f:convertNumber pattern="#,###,###,##0.00" minFractionDigits="2" />
+						<p:ajax update="salarioCliente,:formulario:menssagem" event="blur" />
+					</p:inputText>
+
+					<p:inputMask id="foneLocalTrabalho"
+						value="#{propostaBean.proposta.foneLocalTrabalho}"
+						mask="(99) 9999-9999" styleClass="fone" required="true" />
+
+				</h:panelGrid>
+
+				<h:panelGrid id="enderecoComercial" columns="3" cellpadding="2">
+					<p:outputLabel for="comLogradouro" value="Logradouro:" />
+					<p:outputLabel for="comNumero" value="Número:" />
+					<p:outputLabel for="comComplemento" value="Complemento:" />
+					<p:inputText id="comLogradouro"
+						value="#{propostaBean.proposta.comLogradouro}"
+						styleClass="nomeDescricao"
+						validator="validacoes.validaPreenchimento" required="true">
+						<p:ajax event="blur" update="comLogradouro,:formulario:menssagem">
+							<f:validator validatorId="comLogradouro" />
+						</p:ajax>
+					</p:inputText>
+					<p:inputText id="comNumero"
+						value="#{propostaBean.proposta.comNumero}" styleClass="cep"
+						required="true" />
+					<p:inputText id="comComplemento"
+						value="#{propostaBean.proposta.comComplemento}"
+						styleClass="padrao" />
+				</h:panelGrid>
+
+				<h:panelGrid id="enderecoComercial1" columns="3" cellpadding="2">
+					<p:outputLabel for="comBairro" value="Bairro:" />
+					<p:outputLabel for="comCidade" value="Cidade:" />
+					<p:outputLabel for="comUf" value="UF:" />
+					<p:inputText id="comBairro"
+						value="#{propostaBean.proposta.comBairro}" styleClass="padrao"
+						validator="validacoes.validaPreenchimento" required="true">
+						<p:ajax event="blur" update="comBairro,:formulario:menssagem">
+							<f:validator validatorId="comBairro" />
+						</p:ajax>
+					</p:inputText>
+					<p:inputText id="comCidade"
+						value="#{propostaBean.proposta.comCidade}" styleClass="padrao"
+						validator="validacoes.validaPreenchimento" required="true">
+						<p:ajax event="blur" update="comCidade,:formulario:menssagem">
+							<f:validator validatorId="comCidade" />
+						</p:ajax>
+					</p:inputText>
+					<p:selectOneMenu id="comUf" value="#{propostaBean.proposta.comUf}"
+						styleClass="uf" required="true">
+						<f:selectItem itemLabel="Sel ." itemValue="" />
+						<f:selectItems value="#{propostaBean.estados}" />
+					</p:selectOneMenu>
+				</h:panelGrid>
+
+				<h:panelGrid columns="2" cellpadding="2">
+					<p:outputLabel value="Fonte da segunda renda:" />
+					<p:outputLabel value="Segunda renda:" />
+					<p:inputText id="fonteSegundaRenda"
+						value="#{propostaBean.proposta.provenienteRenda2}"
+						styleClass="segundaRenda" />
+					<p:inputText id="segundaRendaCliente"
+						value="#{propostaBean.proposta.renda2}" styleClass="dinheiro">
+						<f:convertNumber pattern="#,###,###,##0.00" minFractionDigits="2" />
+						<p:ajax update="segundaRendaCliente" event="change" />
+					</p:inputText>
+				</h:panelGrid>
+				<h4>Referência pessoal e bancária</h4>
+				<h:panelGrid columns="4" cellpadding="2">
+					<p:outputLabel for="referenciaPessoal1"
+						value="Referência pessoal 1:" />
+					<p:outputLabel for="foneReferencia1" value="Telefone:" />
+					<p:outputLabel for="referenciaPessoal2"
+						value="Referência pessoal 2:" />
+					<p:outputLabel for="foneReferencia2" value="Telefone:" />
+					<p:inputText id="referenciaPessoal1"
+						value="#{propostaBean.proposta.referencia1}"
+						styleClass="referencia" validator="validacoes.validaPreenchimento"
+						required="true">
+						<p:ajax event="blur"
+							update="referenciaPessoal1,:formulario:menssagem">
+							<f:validator validatorId="referenciaPessoal1" />
+						</p:ajax>
+					</p:inputText>
+
+					<p:inputMask id="foneReferencia1"
+						value="#{propostaBean.proposta.foneRefencia1}"
+						mask="(99) 9999-9999" styleClass="fone" required="true" />
+					<p:inputText id="referenciaPessoal2"
+						value="#{propostaBean.proposta.referencia2}"
+						styleClass="referencia" />
+					<p:inputMask id="foneReferencia2"
+						value="#{propostaBean.proposta.foneReferencia2}"
+						mask="(99) 9999-9999" styleClass="fone" />
+				</h:panelGrid>
+				<h:panelGrid columns="4" cellpadding="2">
+					<p:outputLabel for="bancoCliente" value="Banco:" />
+					<p:outputLabel for="agenciaCliente" value="Agência:" />
+					<p:outputLabel for="contaCliente" value="Conta:" />
+					<p:outputLabel for="aberturaContaCliente" value="Cliente desde:" />
+					<p:selectOneMenu id="bancoCliente"
+						value="#{propostaBean.proposta.banco}" styleClass="banco"
+						required="true">
+						<f:selectItem itemLabel="Selecione..." itemValue="" />
+						<f:selectItems value="#{propostaBean.relacaoBancos}" />
+					</p:selectOneMenu>
+					<p:inputText id="agenciaCliente"
+						value="#{propostaBean.proposta.agencia}"
+						styleClass="dadosContaAgencia"
+						validator="validacoes.validaPreenchimento" required="true">
+						<p:ajax event="blur" update="agenciaCliente,:formulario:menssagem">
+							<f:validator validatorId="agenciaCliente" />
+						</p:ajax>
+					</p:inputText>
+					<p:inputText id="contaCliente"
+						value="#{propostaBean.proposta.conta}"
+						styleClass="dadosContaCorrente"
+						validator="validacoes.validaPreenchimento" required="true">
+						<p:ajax event="blur" update="contaCliente,:formulario:menssagem">
+							<f:validator validatorId="contaCliente" />
+						</p:ajax>
+					</p:inputText>
+					<p:calendar id="aberturaContaCliente"
+						value="#{propostaBean.proposta.abertura}" pattern="MM/yyyy"
+						mask="true" styleClass="dataCalendar" effect="fold"
+						required="true" />
+				</h:panelGrid>
+			</p:tab>
+			<p:tab title="Dados do cônjugue">
+				<h:panelGrid styleClass="conjugue">
+					<h:panelGrid columns="3" cellpadding="2">
+						<p:outputLabel for="nomeConjugue" value="Nome:" />
+						<p:outputLabel value="CPF:" />
+						<p:outputLabel value="Data Nascimento:" />
+						<p:inputText id="nomeConjugue"
+							value="#{propostaBean.proposta.nomeConjugue}"
+							styleClass="nomeDescricao"
+							validator="validacoes.validaPreenchimento">
+							<p:ajax event="blur" update="nomeConjugue,:formulario:menssagem">
+								<f:validator validatorId="nomeConjugue" />
+							</p:ajax>
+						</p:inputText>
+						<p:inputMask id="cpfConjugue"
+							value="#{propostaBean.proposta.cpfConjugue}"
+							styleClass="cpfCliente" mask="999.999.999-99"
+							validator="validacoes.validaCodigoCliente">
+							<p:ajax event="blur" update=":formulario:menssagem">
+								<f:validator validatorId="cpfConjugue" />
+							</p:ajax>
+						</p:inputMask>
+						<p:calendar id="dataNascimentoConjugue"
+							value="#{propostaBean.proposta.dataNascimentoConjugue}"
+							pattern="dd/MM/yyyy" mask="true" styleClass="dataCalendar"
+							effect="fold" />
+					</h:panelGrid>
+
+					<h:panelGrid columns="5" cellpadding="2">
+						<p:outputLabel value="Número do RG:" />
+						<p:outputLabel value="Órgão emissor:" />
+						<p:outputLabel value="UF RG:" />
+						<p:outputLabel value="Data de emissão:" />
+						<p:outputLabel value="Nacionalidade:" />
+						<p:inputText id="numeroRgConjugue"
+							value="#{propostaBean.proposta.registroGeralConjugue}"
+							styleClass="padrao" />
+						<p:inputText id="orgaoEmissorConjugue"
+							value="#{propostaBean.proposta.orgaoEmissorConjugue}"
+							styleClass="padrao" />
+						<p:selectOneMenu id="ufOrgaoEmissorConjugue"
+							value="#{propostaBean.proposta.ufOrgaoEmissorConjugue}"
+							styleClass="uf">
+							<f:selectItem itemLabel="Sel ." itemValue="" />
+							<f:selectItems value="#{propostaBean.estados}" />
+						</p:selectOneMenu>
+						<p:calendar id="dataEmissaoConjugue"
+							value="#{propostaBean.proposta.dataEmissaoConjugue}"
+							pattern="dd/MM/yyyy" mask="true" styleClass="dataCalendar"
+							effect="fold" />
+						<p:selectOneMenu id="nacionalidadeConjugue"
+							value="#{propostaBean.proposta.nacionalidadaConjugue}"
+							styleClass="nacionalidade">
+							<f:selectItem itemLabel="Selecione..." itemValue="" />
+							<f:selectItems value="#{propostaBean.nacionalidades}" />
+						</p:selectOneMenu>
+					</h:panelGrid>
+
+					<h:panelGrid columns="4" cellpadding="2">
+						<p:outputLabel value="Naturalidade:" />
+						<p:outputLabel value="UF:" />
+						<p:outputLabel value="Sexo:" />
+						<p:outputLabel value="Escolaridade:" />
+						<p:inputText id="naturalidadeConjugue"
+							value="#{propostaBean.proposta.naturalidadeConjugue}"
+							styleClass="padrao" />
+						<p:selectOneMenu id="ufNaturalidadeConjugue"
+							value="#{propostaBean.proposta.ufNaturalidadeConjugue}"
+							styleClass="uf">
+							<f:selectItem itemLabel="Sel ." itemValue="" />
+							<f:selectItems value="#{propostaBean.estados}" />
+						</p:selectOneMenu>
+						<p:selectOneMenu id="sexoConjugue"
+							value="#{propostaBean.proposta.sexoConjugue}" styleClass="sexo">
+							<f:selectItem itemLabel="Selecione..." itemValue="" />
+							<f:selectItems value="#{propostaBean.sexos}" />
+						</p:selectOneMenu>
+						<p:selectOneMenu id="escolaridadeConjugue"
+							value="#{propostaBean.proposta.escolaridadeConjugue}"
+							styleClass="escolariadadeCliente">
+							<f:selectItem itemLabel="Selecione..." itemValue="" />
+							<f:selectItems value="#{propostaBean.escolariadades}" />
+						</p:selectOneMenu>
+					</h:panelGrid>
+
+					<h:panelGrid columns="2" cellpadding="2">
+						<p:outputLabel value="Pai:" />
+						<p:outputLabel value="Mãe:" />
+						<p:inputText id="PaiConjugue"
+							value="#{propostaBean.proposta.paiConjugue}"
+							styleClass="filiacao" />
+						<p:inputText id="MaeConjugue"
+							value="#{propostaBean.proposta.maeConjugue}"
+							styleClass="filiacao" />
+					</h:panelGrid>
+
+					<h:panelGrid columns="2" cellpadding="2">
+						<p:outputLabel value="Fone Celular:" />
+						<p:outputLabel value="E-mail:" />
+						<p:inputMask id="foneCelularConjugue"
+							value="#{propostaBean.proposta.celularConjugue}"
+							mask="(99) 9999-9999" styleClass="fone" />
+						<p:inputText id="emailClienteConjugue"
+							value="#{propostaBean.proposta.emailConjugue}"
+							styleClass="emailPadrao" />
+					</h:panelGrid>
+					<h4>Dados do local de trabalho cônjugue</h4>
+					<h:panelGrid columns="3" cellpadding="2">
+						<p:outputLabel value="Tipo do local de trabalho:" />
+						<p:outputLabel value="Empresa:" />
+						<p:outputLabel value="Data Admissão:" />
+						<p:selectOneMenu id="tipoLocalTrabalhoConjugue"
+							value="#{propostaBean.proposta.classificacaoLocalTrabalhoConjugue}">
+							<f:selectItem itemLabel="Selecione..." itemValue="" />
+							<f:selectItems
+								value="#{propostaBean.classificacaoLocalTrabalhos}" />
+						</p:selectOneMenu>
+						<p:inputText id="empresaClienteConjugue"
+							value="#{propostaBean.proposta.empresaConjugue}"
+							styleClass="empresa" />
+						<p:calendar id="dataAdmissaoConjugue"
+							value="#{propostaBean.proposta.dataAdmissaoConjugue}"
+							pattern="dd/MM/yyyy" mask="true" styleClass="dataCalendar"
+							effect="fold" />
+					</h:panelGrid>
+					<h:panelGrid columns="5" cellpadding="2">
+						<p:outputLabel value="Cnpj:" />
+						<p:outputLabel value="Cargo:" />
+						<p:outputLabel value="Salário:" />
+						<p:outputLabel value="Fone trabalho:" />
+						<p:outputLabel value="CEP:" />
+
+						<p:inputMask id="cnpjClienteConjugue"
+							value="#{propostaBean.proposta.cnpjConjugue}"
+							styleClass="cpfCliente" mask="99.999.999/9999-99"
+							validator="validacoes.validaCodigoCliente">
+							<p:ajax event="blur" update=":formulario:menssagem">
+								<f:validator validatorId="cnpjClienteConjugue" />
+							</p:ajax>
+						</p:inputMask>
+						<p:inputText id="cargoClienteConjugue"
+							value="#{propostaBean.proposta.cargoConjugue}" styleClass="cargo" />
+						<p:inputText id="salarioClienteConjugue"
+							value="#{propostaBean.proposta.salarioConjugue}"
+							styleClass="dinheiro">
+							<f:convertNumber pattern="#,###,###,##0.00" minFractionDigits="2" />
+							<p:ajax update="salarioClienteConjugue" event="change" />
+						</p:inputText>
+
+						<p:inputMask id="foneLocalTrabalhoConjugue"
+							value="#{propostaBean.proposta.foneLocalTrabalhoConjugue}"
+							mask="(99) 9999-9999" styleClass="fone" />
+						<p:inputMask id="cepComercialConjugue"
+							value="#{propostaBean.proposta.comCepConjugue}" mask="99999-999"
+							styleClass="cep">
+							<p:ajax event="change"
+								listener="#{propostaBean.buscaCepComercial}"
+								update="enderecoComercialConjugue,enderecoComercialConjugue1,:formulario:menssagem" />
+						</p:inputMask>
+					</h:panelGrid>
+
+					<h:panelGrid id="enderecoComercialConjugue" columns="3"
+						cellpadding="2">
+						<p:outputLabel value="Logradouro:" />
+						<p:outputLabel value="Número:" />
+						<p:outputLabel value="Complemento:" />
+						<p:inputText id="comLogradouroConjugue"
+							value="#{propostaBean.proposta.comLogradouroConjugue}"
+							styleClass="nomeDescricao" />
+						<p:inputText id="comNumeroConjugue"
+							value="#{propostaBean.proposta.comNumeroConjugue}"
+							styleClass="cep" />
+						<p:inputText id="comComplementoConjugue"
+							value="#{propostaBean.proposta.comComplementoConjugue}"
+							styleClass="padrao" />
+					</h:panelGrid>
+
+					<h:panelGrid id="enderecoComercialConjugue1" columns="3"
+						cellpadding="2">
+						<p:outputLabel value="Bairro:" />
+						<p:outputLabel value="Cidade:" />
+						<p:outputLabel value="UF:" />
+						<p:inputText id="comBairroConjugue"
+							value="#{propostaBean.proposta.comBairroConjugue}"
+							styleClass="padrao" />
+						<p:inputText id="comCidadeConjugue"
+							value="#{propostaBean.proposta.comCidadeConjugue}"
+							styleClass="padrao" />
+						<p:selectOneMenu id="comUfConjugue"
+							value="#{propostaBean.proposta.comUfConjugue}" styleClass="uf">
+							<f:selectItem itemLabel="Sel ." itemValue="" />
+							<f:selectItems value="#{propostaBean.estados}" />
+						</p:selectOneMenu>
+					</h:panelGrid>
+					<h:panelGrid columns="2" cellpadding="2">
+						<p:outputLabel value="Fonte da segunda renda:" />
+						<p:outputLabel value="Segunda renda:" />
+						<p:inputText id="fonteSegundaRendaConjugue"
+							value="#{propostaBean.proposta.provenienteRenda2Conjugue}"
+							styleClass="segundaRenda" />
+						<p:inputText id="segundaRendaConjugue"
+							value="#{propostaBean.proposta.renda2Conjugue}"
+							styleClass="dinheiro">
+							<f:convertNumber pattern="#,###,###,##0.00" minFractionDigits="2" />
+							<p:ajax update="segundaRendaConjugue" event="change" />
+						</p:inputText>
+					</h:panelGrid>
+					<h4>Referência bancária cônjugue</h4>
+					<h:panelGrid columns="4" cellpadding="2">
+						<p:outputLabel value="Banco:" />
+						<p:outputLabel value="Agência:" />
+						<p:outputLabel value="Conta:" />
+						<p:outputLabel value="Cliente desde:" />
+						<p:selectOneMenu id="bancoConjugue"
+							value="#{propostaBean.proposta.bancoConjugue}" styleClass="banco">
+							<f:selectItem itemLabel="Selecione..." itemValue="" />
+							<f:selectItems value="#{propostaBean.relacaoBancos}" />
+						</p:selectOneMenu>
+						<p:inputText id="agenciaConjugue"
+							value="#{propostaBean.proposta.agenciaConjugue}"
+							styleClass="dadosContaAgencia" />
+						<p:inputText id="contaConjugue"
+							value="#{propostaBean.proposta.contaConjugue}"
+							styleClass="dadosContaCorrente" />
+						<p:calendar id="aberturaContaConjugue"
+							value="#{propostaBean.proposta.aberturaConjugue}"
+							pattern="MM/yyyy" mask="true" styleClass="dataCalendar"
+							effect="fold" />
+					</h:panelGrid>
+				</h:panelGrid>
+			</p:tab>
+			<p:tab title="Informações adicionais">
+				<p:inputTextarea cols="113" rows="3"
+					value="#{propostaBean.proposta.informacoes}"
+					styleClass="infomarcoes" />
+			</p:tab>
+		</p:accordionPanel>
+		<h:panelGrid columns="2" cellpadding="4">
+			<p:commandButton value="Enviar"
+				actionListener="#{propostaBean.enviar}"
+				update="menssagem,formulario" />
+		</h:panelGrid>
+	</h:form>
+</h:body>
+</html>

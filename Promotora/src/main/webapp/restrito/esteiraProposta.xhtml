@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Esteira de financiamentos</title>
+	<h:outputStylesheet name="estilo.css" />
+</h:head>
+<h:body>
+	<p:fieldset styleClass="cabecalho_proposta">
+		<h:panelGrid columns="3">
+			<p:graphicImage id="logo" styleClass="logo1"
+				name="img/bb_red2_120x120.png" />
+			<p:outputLabel id="titulo" styleClass="titulo1"
+				value="Financiamento de veículos" />
+		</h:panelGrid>
+	</p:fieldset>
+	<p:ajaxStatus onstart="PF('statusDialog').show()"
+		onsuccess="PF('statusDialog').hide()" />
+	<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+		closable="false" resizable="false" showHeader="false">
+		<p:graphicImage name="img/loading_black.gif" />
+	</p:dialog>
+	<h:form id="formulario">
+		<p:growl id="menssagem" sticky="true" showDetail="true" />
+		<h:panelGrid cellpadding="12">
+			<p:outputLabel value="Esteira de financiamentos"
+				style="text-align:center" />
+		</h:panelGrid>
+		<p:fieldset legend="Pesquisa">
+			<h:panelGrid columns="3" cellpadding="2">
+				<p:outputLabel for="cpfPesquisa" value="CPF:" />
+				<p:outputLabel for="nomePesquisa" value="Nome:" />
+				<p:outputLabel />
+				<p:inputMask id="cpfPesquisa" value="#{propostaBean.cpfPesquisa}"
+					styleClass="cpfCliente" mask="999.999.999-99"
+					validator="validacoes.validaCodigoCliente">
+					<p:ajax event="blur"
+						update="cpfPesquisa,:formulario:tabelaDados,:formulario:menssagem"
+						listener="#{propostaBean.pesquisaPropostasPorCpf}">
+						<f:validator validatorId="cpfPesquisa" />
+					</p:ajax>
+				</p:inputMask>
+				<p:inputText id="nomePesquisa" value="#{propostaBean.nomePesquisa}"
+					styleClass="nomeDescricao">
+					<p:ajax event="blur"
+						update="nomePesquisa,:formulario:tabelaDados,:formulario:menssagem"
+						listener="#{propostaBean.pesquisaPropostaPorNome}" />
+				</p:inputText>
+				<p:commandButton value="Listar todas">
+					<p:ajax event="click"
+						update="nomePesquisa,:formulario:tabelaDados,:formulario:menssagem"
+						listener="#{propostaBean.pesquisaPropostaTotal}" />
+				</p:commandButton>
+			</h:panelGrid>
+		</p:fieldset>
+		<p:dataTable id="tabelaDados" var="tab"
+			value="#{propostaBean.listaPequisada}" selectionMode="single"
+			selection="#{propostaBean.proposta}" rowKey="#{tab.id}"
+			styleClass="tabelaDeDados">
+			<f:facet name="header">
+				<h:panelGrid columns="1" styleClass="cabecalhoDataTable">
+					<h:column styleClass="cabecalhoDataTable">
+						Propostas
+					</h:column>
+					<h:column styleClass="cabecalhoDataTable">
+						Legenda:
+						<h:graphicImage name="img/farol_DIGITADO.png" /> Digitado 
+						<h:graphicImage name="img/farol_ANALISE.png" /> Analise
+						<h:graphicImage name="img/farol_APROVADO.png" /> Aprovado
+						<h:graphicImage name="img/farol_PAGO.png" /> Pago
+						<h:graphicImage name="img/farol_PENDENTE.png" /> Pendente
+						<h:graphicImage name="img/farol_REPROVADO.png" /> Reprovado
+					</h:column>
+				</h:panelGrid>
+			</f:facet>
+			<p:ajax event="rowSelect"
+				listener="#{propostaBean.onPropostaSelecionada}" />
+			<p:column width="4">
+				<p:rowToggler />
+			</p:column>
+			<p:column headerText="Data" width="55">
+				<h:outputText value="#{tab.dataDeEnvio}">
+					<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"
+						timeZone="GMT-03:00" />
+				</h:outputText>
+			</p:column>
+			<p:column headerText="S" width="4">
+				<h:graphicImage name="img/farol_#{tab.status}.png" />
+			</p:column>
+			<p:column headerText="Nome" width="150">
+				<h:outputText value="#{tab.nomeCliente}" />
+			</p:column>
+			<p:column headerText="CPF" width="40">
+				<h:outputText value="#{tab.cpfCliente }" />
+			</p:column>
+			<p:column headerText="V. Financiado" width="35">
+				<h:outputText value="#{tab.valorFinanciado}"
+					style="text-align:right;">
+					<f:convertNumber pattern="#,###,###,##0.00" minFractionDigits="2" />
+				</h:outputText>
+			</p:column>
+			<p:column headerText="Vendedor" width="40">
+				<h:outputLabel value="#{tab.nomeVendedor}" />
+			</p:column>
+			<p:rowExpansion>
+				<h:panelGrid columns="1" style="width:600px">
+					<f:facet name="header">
+						<h:graphicImage name="img/farol_#{tab.status}.png" />
+						<p:outputLabel value="Status: #{tab.status}." />
+					</f:facet>
+					<p:outputLabel value="Informações: #{tab.informacoes}" />
+					<p:outputLabel value="Parecer: #{tab.parecer}" />
+				</h:panelGrid>
+			</p:rowExpansion>
+			<f:facet name="footer">
+				<p:commandButton value="Editar"
+					action="#{propostaBean.redirecionaCadastroProposta}" />
+			</f:facet>
+		</p:dataTable>
+	</h:form>
+</h:body>
+</html>

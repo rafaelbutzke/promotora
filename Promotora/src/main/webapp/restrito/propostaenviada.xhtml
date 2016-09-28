@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Ficha cadastral para solicitação de financiamento</title>
+	<h:outputStylesheet name="estilo.css" />
+</h:head>
+
+<h:body>
+	<p:fieldset styleClass="cabecalho_proposta">
+		<h:panelGrid columns="3">
+			<p:graphicImage id="logo" styleClass="logo1"
+				name="img/bb_red2_120x120.png" />
+			<p:outputLabel id="titulo" styleClass="titulo1"
+				value="Financiamento de veículos" />
+		</h:panelGrid>
+	</p:fieldset>
+
+	<p:ajaxStatus onstart="PF('statusDialog').show()"
+		onsuccess="PF('statusDialog').hide()" />
+
+	<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+		closable="false" resizable="false" showHeader="false">
+		<p:graphicImage name="img/loading_black.gif" />
+	</p:dialog>
+
+	<h:form id="formulario">
+		<p:growl id="menssagem" sticky="true" showDetail="true" />
+		<h:panelGrid columns="1" cellpadding="2">
+			<p:outputLabel id="propostaEnviada"
+				value="Proposta de: #{propostaBean.proposta.nomeCliente} #{propostaBean.proposta.cpfCliente} enviada com sucesso!" style="text-align: center;" />
+			<p:commandButton id="botaoOk" value="OK" action="#{propostaBean.novaProposta}"/>
+		</h:panelGrid>
+	</h:form>
+</h:body>
+</html>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PROCESS model-entity="JSFProcess">
+ <PROCESS-ITEM NAME="rules:*" PATH="*" SHAPE="32,17,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules:*:0" NAME="item" PATH="*" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT ID="proposta::#restrito#proposta.xhtml"
+    NAME="output" PATH="/restrito/proposta.xhtml"
+    TARGET="rules:#restrito#proposta.xhtml" TITLE="proposta" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules:#restrito#esteiraProposta.xhtml"
+  PATH="/restrito/esteiraProposta.xhtml" SHAPE="672,33,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules:#restrito#esteiraProposta.xhtml:0" NAME="item"
+   PATH="/restrito/esteiraProposta.xhtml" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT ID="proposta::#restrito#proposta.xhtml"
+    NAME="output" PATH="/restrito/proposta.xhtml"
+    TARGET="rules:#restrito#proposta.xhtml" TITLE="proposta" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules:#restrito#proposta.xhtml"
+  PATH="/restrito/proposta.xhtml" SHAPE="256,33,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules:#restrito#proposta.xhtml:0" NAME="item"
+   PATH="/restrito/proposta.xhtml" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT ID="enviada::#restrito#propostaenviada.xhtml"
+    NAME="output" PATH="/restrito/propostaenviada.xhtml"
+    TARGET="rules:#restrito#propostaenviada.xhtml" TITLE="enviada" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules:#restrito#propostaenviada.xhtml"
+  PATH="/restrito/propostaenviada.xhtml" SHAPE="464,17,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules:#restrito#propostaenviada.xhtml:0" NAME="item"
+   PATH="/restrito/propostaenviada.xhtml" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT ID="esteira::#restrito#esteiraProposta.xhtml"
+    NAME="output" PATH="/restrito/esteiraProposta.xhtml"
+    TARGET="rules:#restrito#esteiraProposta.xhtml" TITLE="esteira" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+</PROCESS>

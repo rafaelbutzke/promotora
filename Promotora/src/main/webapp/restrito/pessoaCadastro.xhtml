@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Cadastro de pessoa</title>
+	<h:outputStylesheet name="estilo.css" />
+</h:head>
+
+<h:body>
+	<p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
+
+	<p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+		<p:graphicImage name="img/loading_black.gif" />
+	</p:dialog>
+
+	<h:form id="formulario">
+		<p:growl id="menssagem" sticky="true" showDetail="true" />
+		<p:outputLabel value="Cadastro de pessoa" styleClass="tituloPaginas" />
+		<!--inicio -->
+		<h:panelGrid columns="2">
+			<p:outputLabel for="tipoPessoa" value="Tipo de Pessoa:" />
+			<p:selectOneRadio id="tipoPessoa" value="#{pessoaBean.pessoa.tipoPessoa}">
+				<f:selectItems value="#{pessoaBean.tipoPessoas}" />
+				<p:ajax event="change" listener="#{pessoaBean.verificaTipoPesso}" update="formulario" />
+			</p:selectOneRadio>
+		</h:panelGrid>
+		<h:panelGrid columns="1" rendered="#{pessoaBean.tPessoa=='fisica'}">
+			<f:facet name="header"> Pessoa física </f:facet>
+			<h:panelGrid columns="3">
+				<p:outputLabel value="Nome:" for="pessoaNome" />
+				<p:outputLabel value="CPF:" for="pessoaCpf" />
+				<p:outputLabel value="Data Nascimento:" for="pessoaDataNascimento" />
+				<p:inputText id="pessoaNome" value="#{pessoaBean.pf.nome}" required="true" styleClass="nomeDescricao">
+					<p:ajax event="blur" listener="#{pessoaBean.chamar}" update="pessoaNome"/>
+				</p:inputText>
+				<p:inputMask id="pessoaCpf" value="#{pessoaBean.pf.cpf}" required="true" mask="999.999.999-99" styleClass="cpf" />
+				<p:calendar id="pessoaDataNascimento" value="#{pessoaBean.pf.dataNascimento}" pattern="dd/MM/yyyy" mask="true" showOn="false" required="true" />
+			</h:panelGrid>
+			<h:panelGrid columns="6">
+				<p:outputLabel value="Sexo:" for="sexo"/>
+				<p:outputLabel value="Estado Civil:" for="estadoCivil"/>
+				<p:outputLabel value="Nacionalidade:" for="nacionalidade" />
+				<p:outputLabel value="Naturalidade:" for="naturalidade"/>
+				<p:outputLabel value="UF:" for="ufNaturalidade" />
+				<p:outputLabel value="Escolaridade" for="escolaridade"/>
+				<p:selectOneMenu id="sexo" value="#{pessoaBean.pf.sexo}" required="true">
+					<f:selectItem itemLabel="Selecione" itemValue=""/>
+					<f:selectItems value="#{pessoaBean.generos}"/>
+					<p:ajax event="change" listener="#{pessoaBean.chamar}"/>
+				</p:selectOneMenu>
+				<p:selectOneMenu id="estadoCivil" value="#{pessoaBean.pf.estadoCivil}" required="true">
+					<f:selectItem itemLabel="Selecione" itemValue=""/>
+					<f:selectItems value="#{pessoaBean.estadoCivil}"/>
+					<p:ajax event="change" listener="#{pessoaBean.chamar}"/>
+				</p:selectOneMenu>
+				<p:selectOneMenu id="nacionalidade" value="#{pessoaBean.pf.nacionalidade}" required="true">
+					<f:selectItem itemLabel="Selecione" itemValue=""/>
+					<f:selectItems value="#{pessoaBean.nacionalidades}"/>
+					<p:ajax event="change" listener="#{pessoaBean.chamar}"/>
+				</p:selectOneMenu>
+				<p:inputText id="naturalidade" value="#{pessoaBean.pf.naturalidade}" required="true">
+					<p:ajax event="blur" listener="#{pessoaBean.chamar}" update="naturalidade"/>
+				</p:inputText>
+				<p:selectOneMenu id="ufNaturalidade" value="" required="true">
+					<f:selectItem itemLabel="Sel." itemValue=""/>
+					<f:selectItems value="#{pessoaBean.estados}"/>
+					<p:ajax event="change" listener="#{pessoaBean.chamar}"/>
+				</p:selectOneMenu>
+				<p:selectOneMenu id="escolaridade" value="#{pessoaBean.pf.escolaridade}" required="true">
+					<f:selectItem itemLabel="Selecione" itemValue=""/>
+					<f:selectItems value="#{pessoaBean.escolaridades}"/>					
+					<p:ajax event="change" listener="#{pessoaBean.chamar}"/>
+				</p:selectOneMenu>
+			</h:panelGrid>
+			<h:panelGrid id="rgCadastro" columns="5">
+				<p:outputLabel for="numeroRg" value="Número do RG:"/>
+				<p:outputLabel for="orgaoEmissor" value="Órgão emissor:"/>
+				<p:outputLabel for="ufOrgaoEmissor" value="UFRG:"/>
+				<p:outputLabel for="dataEmissao" value="Data de emissão:"/>
+				<p:outputLabel />
+				<p:inputText id="numeroRg" value="#{pessoaBean.rg.numeroRegistro}" styleClass="padrao" >
+					<p:ajax event="blur" listener="#{pessoaBean.chamar}" />
+				</p:inputText>
+				<p:inputText id="orgaoEmissor" value="#{pessoaBean.rg.orgaoEmissor}" styleClass="padrao">
+					<p:ajax event="blur" listener="#{pessoaBean.chamar}" />
+				</p:inputText>
+				<p:selectOneMenu id="ufOrgaoEmissor" value="#{pessoaBean.rg.estado}" styleClass="uf">
+					<f:selectItem itemLabel="Sel ." itemValue=""/>
+					<f:selectItems value="#{pessoaBean.estados}"/>
+					<p:ajax event="change" listener="#{pessoaBean.chamar}"/>
+				</p:selectOneMenu>
+				<p:calendar id="dataEmissao" value="#{pessoaBean.rg.dataEmissao}" pattern="dd/MM/yyyy" mask="true" styleClass="dataCalendar" showOn="false">
+					<p:ajax event="blur" listener="#{pessoaBean.adicionarRgPf}" update="rgCadastro,:formulario:tabelaRg"/>
+				</p:calendar>
+				
+
+				<p:commandButton value="Adicionar">
+					<p:ajax event="click" listener="#{pessoaBean.adicionarRgPf}" update="tabelaRg,rgCadastro"/>
+				</p:commandButton>
+			</h:panelGrid>
+			<h:panelGrid columns="1">
+				<p:dataTable id="tabelaRg" var="registros" value="#{pessoaBean.listaRg}" selectionMode="single" selection="#{pessoaBean.rg}" rowKey="#{registros.numeroRegistro}">
+					<f:facet name="header">
+							Lista de Registos Gerais
+						</f:facet>
+					<p:ajax event="rowSelect" listener="#{pessoaBean.editaRgSelecionado}" update=":formulario:tabelaRg,:formulario:rgCadastro"/>
+					<p:column headerText="Numero registro">
+						<p:outputLabel value="#{registros.numeroRegistro}"/>
+					</p:column>
+					<p:column headerText="Orgão emissoar">
+						<p:outputLabel value="#{registros.orgaoEmissor}"/>
+					</p:column>
+					<p:column headerText="UF">
+						<p:outputLabel value="#{registros.estado}"/>
+					</p:column>
+					<p:column headerText="Data de Emissão">
+						<p:outputLabel value="#{registros.dataEmissao}">
+							<f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-03:00" />
+						</p:outputLabel>
+					</p:column>
+				</p:dataTable>
+			</h:panelGrid>
+			<h:panelGrid columns="2">
+				<p:outputLabel for="pessoaMae" value="Mãe:" />
+				<p:outputLabel for="pessoaPai" value="Pai:" />
+				<p:inputText id="pessoaPai" value="#{pessoaBean.pf.pai}" required="true" styleClass="filiacao" />
+				<p:inputText id="pessoaMae" value="#{pessoaBean.pf.mae}" required="true" styleClass="filiacao" />
+			</h:panelGrid>
+			<h:panelGrid columns="4">
+				<p:outputLabel value="Tipo:" for="tipoTelefone"/>
+				<p:outputLabel value="DDD:" for="dddTelefone"/>
+				<p:outputLabel value="Telefone:" for="telefone"/>
+				<p:outputLabel/>
+				<p:selectOneMenu id="tipoTelefone" value="#{pessoaBean.telefone.tipoTelefone}">
+					<f:selectItem itemLabel="Sel..." itemValue=""/>
+					<f:selectItems value="#{pessoaBean.tipoTelefones}"/>
+					<p:ajax event="change" listener="#{pessoaBean.chamar}" />
+				</p:selectOneMenu>
+				<p:inputText id="dddTelefone" value="#{pessoaBean.telefone.ddd}" styleClass="ddd" rendered="true">
+					<p:ajax event="blur" listener="#{pessoaBean.chamar}" />
+				</p:inputText>
+				<p:inputText id="telefone" value="#{pessoaBean.telefone.telefone}" rendered="true">
+					<p:ajax event="blur" listener="#{pessoaBean.adicionarTelefonePf}" update="tabelaTelefone,telefone,dddTelefone,tipoTelefone" />
+				</p:inputText>
+				<p:commandButton value="Adicionar">
+					<p:ajax event="click" listener="#{pessoaBean.adicionarTelefonePf}" update="tabelaTelefone,telefone,dddTelefone,tipoTelefone"/>				
+				</p:commandButton>
+			</h:panelGrid>
+			<h:panelGrid columns="1">
+				<p:dataTable id="tabelaTelefone" var="telefones" value="#{pessoaBean.listaTelefones}" selectionMode="single" selection="#{pessoaBean.telefone}"  rowKey="#{telefones.telefone}">
+				<f:facet name="header">
+					Lista de telefones
+				</f:facet>
+				<p:ajax event="rowSelect" listener="#{pessoaBean.editaTelefoneSelecionado}" update=":formulario:tipoTelefone,:formulario:dddTelefone,:formulario:telefone,tabelaTelefone"/>
+					<p:column headerText="Tipo:">
+						<p:outputLabel value="#{telefones.tipoTelefone}"/>
+					</p:column>
+					<p:column headerText="DDD:">
+						<p:outputLabel value="#{telefones.ddd}"/>
+					</p:column>
+					<p:column headerText="Telefone:">
+						<p:outputLabel value="#{telefones.telefone}"/>
+					</p:column>
+					<!-- 
+					<p:column>
+						<p:commandButton icon="ui-icon-pencil" >
+							<p:ajax listener="#{pessoaBean.editaTelefoneSelecionado}" update=":formulario:dddTelefone,:formulario:telefone,tabelaTelefone,:formulario:tipoTelefone"/>
+						</p:commandButton>
+					</p:column>
+					 -->
+				</p:dataTable>
+				
+				
+				
+				
+				<h:panelGrid id="enderecoResidencial" columns="3" cellpadding="2">
+					<p:outputLabel for="cepResidencial" value="CEP:" />
+					<p:outputLabel for="resLogradouro" value="Logradouro:" />
+					<p:outputLabel for="resNumero" value="Número:" />
+					<p:inputMask id="cepResidencial"
+						value="#{propostaBean.proposta.comCep}" mask="99999-999"
+						styleClass="cep">
+						<p:ajax event="change"
+							listener="#{propostaBean.buscaCepComercial}"
+							update="enderecoComercial,enderecoComercial1,:formulario:menssagem" />
+					</p:inputMask>
+					<p:inputText id="comLogradouro"
+						value="#{propostaBean.proposta.comLogradouro}"
+						styleClass="nomeDescricao"
+						validator="validacoes.validaPreenchimento">
+						<p:ajax event="blur" update="comLogradouro,:formulario:menssagem">
+							<f:validator validatorId="comLogradouro" />
+						</p:ajax>
+					</p:inputText>
+					<p:inputText id="comNumero"
+						value="#{propostaBean.proposta.comNumero}" styleClass="cep" />
+				</h:panelGrid>
+				<h:panelGrid id="enderecoComercial1" columns="5" cellpadding="2">
+					<p:outputLabel for="comComplemento" value="Complemento:" />
+					<p:outputLabel for="comBairro" value="Bairro:" />
+					<p:outputLabel for="comCidade" value="Cidade:" />
+					<p:outputLabel for="comUf" value="UF:" />
+					<p:outputLabel />
+					<p:inputText id="comComplemento"
+						value="#{propostaBean.proposta.comComplemento}"
+						styleClass="padrao" />
+					<p:inputText id="comBairro"
+						value="#{propostaBean.proposta.comBairro}" styleClass="padrao"
+						validator="validacoes.validaPreenchimento">
+						<p:ajax event="blur" update="comBairro,:formulario:menssagem">
+							<f:validator validatorId="comBairro" />
+						</p:ajax>
+					</p:inputText>
+					<p:inputText id="comCidade"
+						value="#{propostaBean.proposta.comCidade}" styleClass="padrao"
+						validator="validacoes.validaPreenchimento">
+						<p:ajax event="blur" update="comCidade,:formulario:menssagem">
+							<f:validator validatorId="comCidade" />
+						</p:ajax>
+					</p:inputText>
+					<p:selectOneMenu id="comUf" value="#{propostaBean.proposta.comUf}"
+						styleClass="uf">
+						<f:selectItem itemLabel="Sel ." itemValue="" />
+						<f:selectItems value="#{propostaBean.estados}" />
+					</p:selectOneMenu>
+					<p:commandButton value="Adicionar">
+					<p:ajax event="click" listener="#{pessoaBean.adicionarTelefonePf}" update="tabelaTelefone,telefone,dddTelefone,tipoTelefone"/>				
+				</p:commandButton>
+				</h:panelGrid>
+				
+				
+				
+				
+				
+				<!-- 
+				<h:panelGrid>
+					<p:inputText value="#{pessoaBean.localTrabalho.empresa}"/>
+					<p:inputText value="#{pessoaBean.localTrabalho.classificacaoLocalTrabalho}"/>
+				</h:panelGrid>
+				 -->
+			</h:panelGrid>
+		</h:panelGrid>
+		<h:panelGrid columns="1" rendered="#{pessoaBean.tPessoa=='juridica'}">
+			<f:facet name="header"> Pessoa jurídica </f:facet>
+			<h:panelGrid columns="3">
+				<p:inputText></p:inputText>
+				<p:inputText></p:inputText>
+				<p:inputText></p:inputText>
+			</h:panelGrid>
+		</h:panelGrid>
+
+		<!-- fim -->
+		<h:panelGrid columns="2">
+			<p:commandButton value="Gravar" action="#{defaultBean.retornoNulo()}" update="formulario:menssagem,formulario" />
+		</h:panelGrid>
+	</h:form>
+</h:body>
+</html>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</h:head>
+
+<ui:composition>
+	<h:form id="cabecalhoLogado">
+		<p:fieldset id="cabecalho" styleClass="cabecalho1">
+			<h:panelGrid columns="3">
+				<p:graphicImage id="logo" styleClass="logo1"
+					name="img/bb_red2_120x120.png" />
+				<p:outputLabel id="titulo" styleClass="titulo1" value="Sistema" />
+				<h:panelGrid columns="2" cellpadding="2">
+					<p:outputLabel value="Usuário:" styleClass="user1" id="user" />
+					<p:outputLabel value="Nome" for="user" styleClass="user2" />
+					<p:outputLabel value="Permissão:" styleClass="permissao1"
+						id="permissao" />
+					<p:outputLabel value="Perm" for="permissao" styleClass="permissao2" />
+				</h:panelGrid>
+			</h:panelGrid>
+		</p:fieldset>
+	</h:form>
+</ui:composition>
+</html>

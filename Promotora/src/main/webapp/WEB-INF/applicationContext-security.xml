@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
+	http://www.springframework.org/schema/security 
+	http://www.springframework.org/schema/security/spring-security.xsd">
+
+	<http auto-config="true">
+		<intercept-url pattern="/restrito/**" access="PARCEIRO"/>
+		<intercept-url pattern="/nivel08/**" access="SUPER"/>
+		<form-login login-page="/publico/login.jsf"
+			always-use-default-target="true" 
+			default-target-url="/restrito/principal.jsf"
+			authentication-failure-url="/publico/login.jsf?login_error=1" />
+		<logout />
+		<remember-me />
+	</http>
+	<authentication-manager>
+		<authentication-provider>
+			<user-service>
+				<user name="rafael" password="Act2132br"  authorities="SUPER,PARCEIRO"/>
+				<user name="rafael2" password="Act2132br"  authorities="PARCEIRO"/>			
+			</user-service>
+			<!-- verificar se o erro eh o jdbc. 
+			<jdbc-user-service data-source-ref="promotoraDataSource" 
+			users-by-username-query="SELECT login senha ativo FROM usuario WHERE login = ?"
+			authorities-by-username-query="SELECT u.login, u.nivelPermissao FROM usuario u, WHERE u.login = ?"/>  
+			-->
+		</authentication-provider>
+	</authentication-manager>
+
+
+</beans:beans>

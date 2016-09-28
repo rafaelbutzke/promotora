@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title><ui:insert name="titulo">Sistema para revendas - RCB Systens</ui:insert></title>
+	<h:outputStylesheet name="estilo.css" />
+</h:head>
+<h:body>
+	<div id="cabecalhoPrincipal">
+		<ui:insert name="cabecalho">
+			<ui:include src="/publico/cabecalho.xhtml" />
+		</ui:insert>
+	</div>
+	<p:ajaxStatus onstart="PF('statusDialog').show()"
+		onsuccess="PF('statusDialog').hide()" />
+
+	<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+		closable="false" resizable="false" showHeader="false">
+		<p:graphicImage name="img/loading_black.gif" />
+	</p:dialog>
+	<div id="corpo">
+		<ui:insert name="corpo">
+			<h:form id="formulario">
+				<p:growl id="menssagem" sticky="true" showDetail="true" />
+				<p:panelGrid styleClass="acesso">
+					<f:facet name="header">
+						<p:row>
+							<p:column styleClass="tituloAcesso">Acesso ao sistema</p:column>
+						</p:row>
+					</f:facet>
+					<p:row>
+						<p:column>
+							<h:panelGrid columns="2" cellpadding="5">
+								<h:outputLabel value="Login:" />
+								<p:inputText value="Master" styleClass="acessoInput" />
+								<p:outputLabel value="Senha:" />
+								<p:password value="" styleClass="acessoInput" />
+							</h:panelGrid>
+							<h:panelGrid columns="1" cellpadding="5">
+								<p:commandButton value="Logar" styleClass="acessoBotao">
+									<!-- <p:ajax listener="null" event="click" update=":formulario:menssagem" /> -->
+								</p:commandButton>
+							</h:panelGrid>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</h:form>
+		</ui:insert>
+	</div>
+	<div id="rodape">
+		<ui:insert name="rodape">
+			<ui:include src="/publico/rodape.xhtml" />
+		</ui:insert>
+	</div>
+</h:body>
+</html>

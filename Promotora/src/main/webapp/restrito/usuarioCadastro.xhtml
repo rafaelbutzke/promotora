@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Cadastro de usuário</title>
+	<h:outputStylesheet name="estilo.css" />
+</h:head>
+
+<h:body>
+	<p:ajaxStatus onstart="PF('statusDialog').show()"
+		onsuccess="PF('statusDialog').hide()" />
+
+	<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+		closable="false" resizable="false" showHeader="false">
+		<p:graphicImage name="img/loading_black.gif" />
+	</p:dialog>
+
+	<h:form id="formulario">
+		<p:growl id="menssagem" sticky="true" showDetail="true" />
+		<p:outputLabel value="Cadastro de usuário" styleClass="tituloPaginas"/>
+		<h:inputHidden value="#{usuarioBean.usuario.id}"/>
+		<h:inputHidden value="#{usuarioBean.usuario.ativo}"/>
+		<h:panelGrid >
+			<h:panelGrid columns="2" cellpadding="2">
+			<p:outputLabel value="CPF:" for="usuarioPessoaCpf" />
+			<p:outputLabel value="Nome:" for="usuarioPessoaNome"/>
+			<p:inputMask id="usuarioPessoaCpf" value="#{usuarioBean.cpf}" styleClass="cpfCliente" mask="999.999.999-99" required="true">
+				<p:ajax event="blur" listener="#{usuarioBean.buscaPessoa}" update="usuarioPessoaNome,:formulario:menssagem"/>
+			</p:inputMask>
+			<p:inputText id="usuarioPessoaNome" value="#{usuarioBean.usuario.pessoa.nome}" styleClass="nomeDescricao" readonly="true" required="true"/>	
+			</h:panelGrid>
+			<h:panelGrid columns="3" cellpadding="2">
+			<p:outputLabel value="Apelido:" for="usuarioApelido"/>
+			<p:outputLabel value="Tipo usuário:" for="usuarioTipo"/>
+			<p:outputLabel value="Região:" for="usuarioRegiao"/>
+			<p:inputText id="usuarioApelido" value="#{usuarioBean.usuario.apelido}" required="true" maxlength="30" styleClass="veiculo"/>
+			<p:selectOneMenu id="usuarioTipo" value="#{usuarioBean.usuario.tipoUsuario}" required="true">
+				<f:selectItem itemLabel="Selecione..."/>
+				<f:selectItems value="#{usuarioBean.tipoUsuarios}"/>
+			</p:selectOneMenu>
+			<p:selectOneMenu id="usuarioRegiao" value="#{usuarioBean.usuario.regiao}" required="true">
+			<f:selectItem itemLabel="Selecione..."/>
+			<f:selectItems value="#{regiaoBean.regioes}" var="reg" itemLabel="#{reg.descricao}" itemValue="#{reg}"/>
+			</p:selectOneMenu>
+			</h:panelGrid>
+			<h:panelGrid columns="3" cellpadding="2">
+				<p:outputLabel value="Nível permissão:" for="usuarioPermissao"/>
+				<p:outputLabel value="Ramal:" for="usuarioRamal"/>
+				<p:outputLabel value="Servidor telefone:" for="usuarioServidorTelefone"/>
+				<p:selectOneMenu id="usuarioPermissao" value="#{usuarioBean.usuario.nivelPermissao}" required="true">
+					<f:selectItem itemLabel="Selecione..."/>
+					<f:selectItems value="#{usuarioBean.niveisPermissoes}"/>
+				</p:selectOneMenu>
+				<p:inputText id="usuarioRamal" value="#{usuarioBean.usuario.ramal}" required="true" styleClass="cep"/>
+				<p:inputText id="usuarioServidorTelefone" value="#{usuarioBean.usuario.servidorTelefone}" required="true"/>
+			</h:panelGrid>
+			<h:panelGrid columns="2" cellpadding="2">
+				<p:outputLabel value="Senha:" for="usuarioSenha"/>
+				<p:outputLabel value="Confirma Senha:" for="confirmaSenha"/>
+				<p:password id="usuarioSenha" value="#{usuarioBean.usuario.senha}" />
+				<p:password id="confirmaSenha" value="#{usuarioBean.confirmaSenha}"/>
+			</h:panelGrid>
+		</h:panelGrid>
+		<h:panelGrid columns="2" cellpadding="2">
+			<p:commandButton value="Cancelar" action="#{usuarioBean.novo}" update="formulario,formulario:menssagem"/>
+			<p:commandButton value="Salvar" action="#{usuarioBean.salvar}" update="formulario,formulario:menssagem"/>
+		</h:panelGrid>
+	</h:form>
+</h:body>
+</html>

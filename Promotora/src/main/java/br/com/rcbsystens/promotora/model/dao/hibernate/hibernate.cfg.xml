@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN" "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+	<session-factory>
+		<!-- Configuração da conexão com o banco MySQL e dialeto -->
+		<property name="dialect">org.hibernate.dialect.MySQL5InnoDBDialect</property>
+		<!-- 
+		<property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+		<property name="connection.url">jdbc:mysql://localhost/promotora</property>
+		<property name="connection.username">root</property>
+		<property name="connection.password">Act2132br</property>
+		 -->
+		 <property name="connection.datasource">java:/comp/env/jdbc/PromotoraDB</property>
+		<property name="current_session_context_class">thread</property>
+		<property name="hibernate.hbm2ddl.auto">update</property>
+
+		<!-- Usando as configurações do C3PO para pool de conexões -->
+		<property name="c3po.min_size">5</property>
+		<property name="c3po.max_size">20</property>
+		<property name="c3po.timeout">300</property>
+		<property name="c3po.max_statements">50</property>
+		<property name="c3po.idle_test_period">3000</property>
+
+		<!-- Configurações de debug -->
+		<property name="show_sql">true</property>
+		<property name="format_sql">true</property>
+		<property name="generate_statistics">true</property>
+		<property name="use_sql_comments">true</property>
+		<!-- mapeamento de classes -->
+		<mapping class="br.com.rcbsystens.promotora.model.entidades.usuario.Usuario" />
+		<mapping class="br.com.rcbsystens.promotora.model.entidades.pessoa.Pessoa"/>
+		<mapping class="br.com.rcbsystens.promotora.model.entidades.pessoa.PessoaFisica"/>
+		<mapping class="br.com.rcbsystens.promotora.model.entidades.pessoa.PessoaJuridica"/>
+		<mapping class="br.com.rcbsystens.promotora.model.entidades.telefones.Telefones"/>
+		<mapping class="br.com.rcbsystens.promotora.model.entidades.socios.Socios"/>
+		<mapping class="br.com.rcbsystens.promotora.model.entidades.referencias.Referencias"/>
+		<mapping class="br.com.rcbsystens.promotora.model.entidades.referenciabancaria.ReferenciaBancaria"/>
+		<mapping class="br.com.rcbsystens.promotora.model.entidades.enderecos.Enderecos"/>
+		<mapping class="br.com.rcbsystens.promotora.model.entidades.emails.Emails"/>
+		<mapping class="br.com.rcbsystens.promotora.model.entidades.registrogeral.RegistroGeral"/>
+		<mapping class="br.com.rcbsystens.promotora.model.entidades.localtrabalho.LocalTrabalho"/>
+		<mapping class="br.com.rcbsystens.promotora.model.propostaweb.PropostaWeb"/>
+		
+	</session-factory>
+</hibernate-configuration>

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Ficha cadastral para solicitação de financiamento</title>
+	<h:outputStylesheet name="estilo.css" />
+</h:head>
+<h:body>
+	<p:fieldset styleClass="cabecalho">
+		<h:panelGrid columns="3">
+			<p:graphicImage id="logo" styleClass="logo1" name="img/bb_red2.gif"
+				width="120" height="120" />
+			<p:outputLabel id="titulo" styleClass="titulo1"
+				value="Financiamento de veículos" />
+		</h:panelGrid>
+	</p:fieldset>
+
+	<p:ajaxStatus onstart="PF('statusDialog').show()"
+		onsuccess="PF('statusDialog').hide()" />
+
+	<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+		closable="false" resizable="false" showHeader="false">
+		<p:graphicImage name="img/loading_black.gif" />
+	</p:dialog>
+
+	<h:form id="formulario">
+
+		<p:fieldset legend="Ficha cadastral para solicitação de financiamento">
+
+			<h:panelGrid columns="2" cellpadding="4">
+				<p:outputLabel value="Texto:" />
+				<p:outputLabel />
+				<p:inputText id="texto" value="#{testeBean.texto}"
+					styleClass="nomeDescricao" />
+				<p:outputLabel />
+				<p:outputLabel value="Email:" />
+				<h:outputLabel />
+				<p:inputText id="email" value="#{testeBean.email}"
+					styleClass="emailPadrao" />
+				<p:outputLabel />
+			</h:panelGrid>
+			<h:panelGrid columns="3" cellpadding="4">
+				<p:outputLabel value="Data:   " />
+				<p:calendar id="insetData" value="#{testeBean.data}"
+					pattern="dd/MM/yyyy" styleClass="dataCalendar" effect="fold">
+					<p:ajax event="dateSelect" update="data" />
+					<p:ajax event="change" update="data" />
+				</p:calendar>
+				<p:outputLabel id="data" value="#{testeBean.data}">
+					<f:convertDateTime pattern="dd/MMM/yyyy" />
+				</p:outputLabel>
+			</h:panelGrid>
+			<h:panelGrid columns="3" cellpadding="3">
+				<p:outputLabel value="Valor:   " />
+				<p:inputText value="#{testeBean.valor}" id="valor"
+					styleClass="dinheiro">
+					<f:convertNumber pattern="#,###,###,##0.00" minFractionDigits="2" />
+					<p:ajax update="valor" event="change" />
+				</p:inputText>
+				<p:outputLabel />
+				<p:outputLabel value="Valor Big Decimal:   " />
+				<p:inputText value="#{testeBean.valorBigDecimal}"
+					id="valorBigDecimal" styleClass="dinheiro">
+					<f:convertNumber pattern="#,###,###,##0.00" minFractionDigits="2" />
+					<p:ajax update="valorBigDecimal" event="change" />
+				</p:inputText>
+				<p:outputLabel />
+				<p:outputLabel value="Percentual :   " />
+				<p:inputText value="#{testeBean.percentualComissao}"
+					id="percentualComissao" styleClass="dinheiro">
+					<f:convertNumber pattern="#,###,###,##0.00" minFractionDigits="2" />
+					<p:ajax update="percentualComissao" event="change" />
+				</p:inputText>
+				<p:outputLabel />
+				<p:outputLabel value="Valor da comissão:   " />
+				<p:inputText value="#{testeBean.valorComissao}" id="valorComissao"
+					styleClass="dinheiro">
+					<f:convertNumber pattern="#,###,###,##0.00" minFractionDigits="2" />
+					<p:ajax update="valorComissao" event="change" />
+				</p:inputText>
+				<p:outputLabel />
+			</h:panelGrid>
+			<p:selectOneMenu id="menuVendedor"
+				value="#{testeBean.codigoDoUsuario}">
+				<f:selectItem itemValue="0" itemLabel="Selecione...." />
+				<f:selectItems value="#{testeBean.usuarios}" var="jsfusuario"
+					itemLabel="#{jsfusuario.nome}" itemValue="#{jsfusuario.codigo}" />
+				<f:ajax listener="#{testeBean.usuarioSelecionado}" event="change"
+					render="codigoUsuario" />
+			</p:selectOneMenu>
+			<h:outputLabel id="codigoUsuario" value="#{testeBean.user.nome}" />
+			<br />
+
+			<p:commandButton update="formulario" value="Salvar"
+				action="#{testeBean.salvar}">
+				<f:ajax />
+			</p:commandButton>
+
+			<p:commandButton value="Gera Banco" action="#{geraBancoBean.gerar}">
+
+
+			</p:commandButton>
+
+		</p:fieldset>
+	</h:form>
+</h:body>
+</html>

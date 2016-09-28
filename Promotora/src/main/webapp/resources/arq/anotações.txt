@@ -1,0 +1,9 @@
+mysql> select cep, endereco, bairro, cidade, uf from tend_endereco, tend_bairro,
+ tend_cidade where tend_endereco.id_bairro = tend_bairro.id_bairro and tend_ende
+reco.id_cidade = tend_cidade.id_cidade and cep like "71250025%";
+
+
+Em 14/11/2012 03:30, Rafael Cristiano Butzke escreveu:
+> select cep, endereco, bairro, cidade, uf from tend_endereco, tend_bairro, tend_cidade where endereco like "%Ouro Preto%";
+
+

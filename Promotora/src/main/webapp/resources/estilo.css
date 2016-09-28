@@ -1,0 +1,190 @@
+@font-face {
+	font-family: "ubuntu";
+	src: local('UbuntuMono-B.ttf'), format('truetype');
+}
+
+body{
+	width: 1105px; 
+	margin: auto;
+}
+.cabecalho_proposta {
+	background: #363636;
+	margin-bottom: 5px;
+	font-size: 18pt;
+}
+
+.fabricante{
+	text-transform: uppercase;
+	width: 150px; 
+}
+.tabelaTamanho{
+	width: 850px !important;
+}
+.cpf{
+	width: 195px;
+}
+.veiculo{
+	text-transform: uppercase;
+	width: 322px;
+}
+.anoModelo{
+	text-transform: uppercase;
+	width: 60px;
+}
+.cabecalho1 {
+	background: #363636;
+	margin-bottom: 5px;
+	font-size: 18pt;
+}
+.logo1{
+	margin-right: 20px; 
+}
+.titulo1{
+	color: #E8E8E8;
+	 
+}
+.user1{
+	font-size: 12pt !important; 
+	color: #E8E8E8; 
+	position: absolute;
+	padding-top: 37px;
+	padding-left: 450px;
+}
+.user2{
+	font-size: 12pt !important; 
+	color: #E8E8E8; 
+	position: absolute;
+	padding-top: 37px;
+	padding-left: 515px!important;
+	}
+.permissao1{
+	font-size: 12pt !important; 
+	color: #E8E8E8; 
+	position: absolute;
+	padding-top: 54px;
+	padding-left: 450px;
+}
+.permissao2{
+	font-size: 12pt !important; 
+	color: #E8E8E8; 
+	position: absolute;
+	padding-top: 54px;
+	padding-left: 535px!important;
+}
+#corpo{
+	height: 600px !important;
+}
+.acesso{
+	width: 400px !important;
+	margin: auto !important;
+	margin-top: 100px !important;
+}
+.acessoInput{
+	width: 303px !important;
+}
+.acessoBotao{
+	width: 390px !important;
+}
+.tituloAcesso{
+	font-size: 16pt !important;
+}
+.nacionalidade{
+	width: 410px;
+}
+.dadosContaAgencia{
+	width: 70px;
+}
+.cargo{
+	text-transform: uppercase;
+	width: 264px;
+}
+.dadosContaCorrente{
+	width: 117px; 
+}
+.cep{
+	width: 110px;
+}
+.ddd{
+	width: 40px;
+}
+.padrao{
+	text-transform: uppercase;
+}
+
+.texto{
+	font-style: oblique;
+}
+
+.naturalidade{
+	width: 60px !important;
+}
+
+.formulario {
+	font-family: ubuntu;
+}
+
+h1 {
+	font-family: ubuntu;
+}
+.tituloPaginas{
+	font-size: 15pt;
+	font-style: oblique;
+	margin-left: auto;
+	margin-right: auto;
+}
+.filiacao{
+	width: 461px;
+	text-transform: uppercase;
+}
+
+.fone{
+	width: 165px;	
+}
+
+.uf{
+	width: 62px;
+}
+.nomeDescricao {
+	width: 500px;
+}
+
+.emailPadrao {
+	text-transform: lowercase;
+	width: 500px;
+}
+
+.dinheiro {
+	width: 133px;
+	text-align: right;
+}
+
+.empresa{
+	width: 393px;
+	text-transform: uppercase; 
+}
+.segundaRenda{
+	width: 790px;
+	text-transform: uppercase;
+}
+.referencia{
+	width: 281px;
+	text-transform: uppercase;
+}
+.dataCalendar {
+	width: 110px;
+}
+.codigoUsuario {
+	vertical-align:	middle;
+}
+.infomarcoes{
+	width: 943px;
+}
+.coeficientes {
+	width: 120px;
+}
+.tabelaDeDados {
+	font-size: 10pt !important;
+}
+.cabecalhoDataTable{
+	border: none !important;
+}

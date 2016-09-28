@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Atualiza Tabelas</title>
+	<h:outputStylesheet name="estilo.css" />
+</h:head>
+<h:body>
+	<h:form id="formulario">
+		<h1>Alterar tabelas</h1>
+		<p:growl id="menssagem" sticky="true" showDetail="true" />
+		<h:panelGrid columns="4" cellpadding="2">
+			<p:outputLabel value="Código:" />
+			<p:outputLabel value="Modelo Inicial:" />
+			<p:outputLabel value="Modelo Final:" />
+			<p:outputLabel value="Vigência:" />
+			<p:inputText value="#{tabelasBean.tabelaSelecionada.codigo}" styleClass="coeficientes"/>
+			<p:inputText value="#{tabelasBean.tabelaSelecionada.modeloInicial}" styleClass="coeficientes"/>
+			<p:inputText value="#{tabelasBean.tabelaSelecionada.modeloFinal}" styleClass="coeficientes"/>
+			<p:calendar id="insetData"
+				value="#{tabelasBean.tabelaSelecionada.vigencia}"
+				pattern="dd/MM/yyyy" styleClass="dataCalendar" effect="fold">
+			</p:calendar>
+		</h:panelGrid>
+		<h:panelGrid>
+			<ui:repeat id="prazo" var="prazos"
+				value="#{tabelasBean.tabelaSelecionada.prazos}" varStatus="pz">
+				<h:column>
+					<h:panelGrid columns="2" cellpadding="2">
+						<p:outputLabel value="Prazo:" />
+						<p:outputLabel value="Entrada:" />
+						<p:selectOneMenu value="#{prazos.prazo}">
+							<f:selectItem itemLabel="Sel..." itemValue="" />
+							<f:selectItems value="#{tabelasBean.prazos}" />
+						</p:selectOneMenu>
+						<p:inputText value="#{prazos.percentualEntrada}" styleClass="coeficientes" id="percentualEntrada">
+							<f:convertNumber pattern="#,###,###,##0.00" minFractionDigits="4" />
+							<p:ajax update="percentualEntrada" event="change" />	
+						</p:inputText>
+					</h:panelGrid>
+					<p:row>
+						<ui:repeat var="planos" value="#{prazos.planos}" varStatus="status" id="pl">
+							<h:panelGrid columns="2">
+								<p:outputLabel value="Retorno: " />
+								<p:outputLabel value="#{planos.retorno.toString()}" />
+								<p:outputLabel value="Coeficiente: " />
+								<p:inputText value="#{planos.coeficiente}" styleClass="coeficientes">
+									<f:convertNumber pattern="#,###,###,##0.00"
+										minFractionDigits="8"/>
+									<p:ajax event="change" update="@(.coeficientes)"/> 
+								</p:inputText>
+							</h:panelGrid>
+						</ui:repeat>
+					</p:row>
+				</h:column>
+			</ui:repeat>
+		</h:panelGrid>
+		<h:panelGrid columns="2" cellpadding="2">
+			<p:commandButton value="Cancelar" actionListener="#{tabelasBean.cancelaAlteracao}" update="menssagem,formulario"/>
+			<p:commandButton value="Salvar Tabela" actionListener="#{tabelasBean.salvaTabela}" update="menssagem,formulario"/>
+			<p:outputLabel />
+		</h:panelGrid>
+		<p:dataTable id="tabelaDados" var="tab"
+			value="#{tabelasBean.todasTabelas}" selectionMode="single"
+			selection="#{tabelasBean.tabelaSelecionada}" rowKey="#{tab.id}">
+			<f:facet name="header">
+			Tabelas Ativas
+	    	</f:facet>
+			<p:ajax event="rowSelect"
+				listener="#{tabelasBean.onTabelaSelecionada}" update=":formulario" />
+			<p:column headerText="Código">
+				<h:outputText value="#{tab.codigo}" />
+			</p:column>
+			<p:column headerText="Inicial">
+				<h:outputText value="#{tab.modeloInicial}" />
+			</p:column>
+			<p:column headerText="Final">
+				<h:outputText value="#{tab.modeloFinal}" />
+			</p:column>
+			<p:column headerText="Vigência">
+				<h:outputText value="#{tab.vigencia}">
+					<f:convertDateTime pattern="dd/MM/yyyy" />
+				</h:outputText>
+			</p:column>
+		</p:dataTable>
+	</h:form>
+</h:body>
+</html>
